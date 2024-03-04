@@ -35,6 +35,24 @@ Para "Lintear" el codigo, el comando
 ```bash
 npx prisma db pull
 ```
+
+## Solucion error de migración en prisma
+> [!IMPORTANT]
+> Si al ejecutar ese comando, aparece este mensaje :
+> ```bash
+> Error: EPERM: operation not permitted, unlink: 'c:...'
+> ```
+> ejecuta los siguientes pasos:
+> 
+>  - Elimina primero el folder Node_modules del proyecto
+>  - Cierra tu editor de codigo y reabrelo en modo **Administrador**
+>  - Abre una terminal dentro de la misma carpeta del proyecto y ejecuta el siguiente comando:
+>    ```bash
+>    npm cache clean --force
+>    ```
+>   - Finalmente vuelve a instalar las dependecias del proyecto y ejecuta la migracion nuevamente
+
+
 # Ejecutar el servido de Express
 En la terminal usa el comando:
 ```bash
