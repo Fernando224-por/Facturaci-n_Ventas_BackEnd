@@ -19,11 +19,17 @@ npx prisma init --datasource-provider mysql
 ```
 esto creara el archivo **.env** y el folder **prisma** donde esta alojado el esquema de nuestra base de datos.
 
+### Generar dependencia de desarollo:
+Para generar la dependencia que servira para hacer las querys en la base de datos, hay que usar el comando:
+```bash
+npx prisma generate
+```
+
 Para ejecutar una migracion en prisma ejecuta este comando:
 ```bash
 npx prisma migrate --dev --name <Nombre de la migración> 
 ```
-cada que realizes una migración dentro de el folder **prisma**, siempre se guardara en un folder llamado **MIGRATIONS** en donde podras ver el historial de migraciones
+cada que realizes una migración dentro de el folder **prisma**, siempre se guardara en un folder llamado **MIGRATIONS** en donde podras ver el historial de migraciones.
 
 > [!TIP]
 > Si solo deseas crear la migracion pero no ejecutarla utiliza el comando:
@@ -58,3 +64,9 @@ En la terminal usa el comando:
 ```bash
 npm run dev
 ```
+
+# Consultar API con REST CLIENT
+Puedes usar cualquier cliente REST como los siguientes:
+- [Insomnia](https://insomnia.rest/)
+- [Postman](https://www.postman.com/)
+- [Thunder Client](https://www.thunderclient.com/)
