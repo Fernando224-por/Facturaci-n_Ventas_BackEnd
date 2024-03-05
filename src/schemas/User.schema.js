@@ -7,7 +7,7 @@ export const newUserSchema = z.object({
     required_error: 'Email es requerido'
   }).email({
     message: 'El correo suministrado no es valido'
-  }).endsWith({
+  }).endsWith('.com', {
     message: 'Solo se aceptan dominios terminados en .com'
   }),
   password: z.string({
