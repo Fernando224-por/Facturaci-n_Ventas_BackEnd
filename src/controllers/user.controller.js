@@ -2,6 +2,9 @@ import { v4 as uuid4 } from 'uuid'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { prisma } from '../db.js'
+import { SendMail } from '../helpers/Mails/sendEmail.js'
+import { useSend } from '../helpers/useSend.js'
+import { useError } from '../helpers/useError.js'
 import { createAccesToken } from '../libs/jwt.js'
 import { JWTKEY } from '../config.js'
 
@@ -86,6 +89,14 @@ export const logOut = async (req, res) => {
   return res.sendStatus(200)
 }
 
+export const sendEmail = async (req, res) => {
+  try {
+    const message = await SendMail()
+    return res.status(200).json(useSend("Correo enviado", message))
+  } catch (error) {
+    return res.status(500).json(useError("Correo no enviado", error))
+  }
+}
 
 export const verifyToken = async (req, res) => {
   const { token } = req.cookies
