@@ -2,6 +2,10 @@ import { v4 as uuid4 } from 'uuid'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { prisma } from '../db.js'
+import { SendMail } from '../helpers/Mails/sendEmail.js'
+import { useSend } from '../helpers/useSend.js'
+import { useError } from '../helpers/useError.js'
+import { notificationTemplate } from '../helpers/Mails/templates/notificationTemplate.js'
 import { createAccesToken } from '../libs/jwt.js'
 import { JWTKEY } from '../config.js'
 
@@ -32,6 +36,10 @@ export const registNewUser = async (req, res) => {
         password: hash
       }
     })
+    await SendMail(notificationTemplate(newUser.emailUser, "Registro Exitoso"), 
+     "Has sido registrado en el sistema",
+     newUser.emailUser
+    )
     const token = await createAccesToken({
       nickName: newUser.nameUser,
       mail: newUser.emailUser
@@ -86,6 +94,18 @@ export const logOut = async (req, res) => {
   return res.sendStatus(200)
 }
 
+export const sendEmail = async (req, res) => {
+  try {
+    const { email } = req.body
+    await SendMail(notificationTemplate(email, 'Prueba de correo'), 
+    "este es un correo de pruebas",
+    email
+    )
+    return res.status(200).json(useSend("Correo enviado", "Good request"))
+  } catch (error) {
+    return res.status(500).json(useError("Correo no enviado", "Bad request"))
+  }
+}
 
 export const verifyToken = async (req, res) => {
   const { token } = req.cookies

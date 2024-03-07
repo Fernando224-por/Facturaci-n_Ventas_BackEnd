@@ -3,7 +3,7 @@ import cors from 'cors'
 import morgan from 'morgan'
 import cookieParser from 'cookie-parser'
 import { FRONT_URL } from './config.js'
-import userRoutes from './routes/user.routes.js'
+import userRoutes from './routes/auth.routes.js'
 
 const app = express()
 app.use(express.json())
