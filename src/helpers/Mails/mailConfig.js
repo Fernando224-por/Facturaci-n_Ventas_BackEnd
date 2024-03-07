@@ -1,5 +1,5 @@
 import { createTransport } from "nodemailer"
-import { nodemailer_password } from "../../config.js"
+import { nodemailer_password, nodemailer_User } from "../../config.js"
 
 export const transporter = createTransport({
   host: 'smtp.gmail.com',
@@ -7,7 +7,7 @@ export const transporter = createTransport({
   secure: true,
   service: "gmail",
   auth: {
-    user: 'andresfernandoxd1591@gmail.com',
+    user: nodemailer_User,
     pass: nodemailer_password
   }
 })

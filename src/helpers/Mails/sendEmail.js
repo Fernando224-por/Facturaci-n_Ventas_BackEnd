@@ -1,15 +1,15 @@
 import { transporter } from './mailConfig.js'
 
-export const SendMail = async () => {
+export const SendMail = async (html, subject, toEmail) => {
   try {
     const mailBody = await transporter.sendMail({
       from: 'andresfernandoxd1591@gmail.com',
-      to: 'andresfernandoxd1591@gmail.com',
-      subject: 'Test de Nodemailer',
-      text: 'Probando el envio de correo con nodemailer'
+      to: toEmail,
+      subject,
+      html
     })
-    return mailBody
+    console.log ("mensaje enviado con exito")
   } catch (error) {
-    return error
+    console.log (error)
   }
 }
