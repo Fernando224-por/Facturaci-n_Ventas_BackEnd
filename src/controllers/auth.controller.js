@@ -23,7 +23,7 @@ export const registNewUser = async (req, res) => {
     })
     if (userFound) {
       return res.status(406).json({
-        errorMessage: 'Este correo ya esta en uso'
+        message: 'Este correo ya esta en uso'
       })
     }
     const identifier = uuid4()
@@ -45,10 +45,12 @@ export const registNewUser = async (req, res) => {
       mail: newUser.emailUser
     })
     res.cookie('token', token)
-    return res.status(200).json(newUser)
+    return res.status(200).json({
+      message: 'Registrado exitosamente'
+    })
   } catch (error) {
     return res.status(404).json({
-      messageError: error
+      message: error
     })
   }
 }
@@ -65,8 +67,8 @@ export const logIn = async (req, res) => {
       }
     })
     if (!userFound) {     
-      return res.state(404).json({
-        messageError: 'Credenciales invalidas'
+      return res.status(406).json({
+        message: 'Credenciales invalidas'
       }) 
     }
     const isMatch = await bcrypt.compare(password, userFound.password)
@@ -79,10 +81,14 @@ export const logIn = async (req, res) => {
       return res.status(200).json({
         message: 'Logeo exitoso'
       })
+    } else {
+      return res.status(406).json({
+        message: 'Credenciales invalidas'
+      }) 
     }
   } catch (error) {
     return res.status(404).json({
-      messageError: error
+      message: error
     })
   }
 }
