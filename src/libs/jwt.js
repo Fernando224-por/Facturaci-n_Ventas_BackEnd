@@ -11,3 +11,10 @@ export function createAccesToken(paylod) {
     })
   })
 }
+
+export async function verifyPassToken(payload) {
+  console.log("Token...");
+  console.log(payload);
+  const decode = await jwt.decode(payload)
+  return decode
+}
