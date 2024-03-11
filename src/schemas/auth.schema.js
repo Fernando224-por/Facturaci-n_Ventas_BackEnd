@@ -31,3 +31,19 @@ export const newLoginSchema = z.object({
     message: 'la contraseña debe tener mas de 8 cracteres de longitud'
   })
 })
+
+export const codeSchema = z.object({
+  code: z.number({
+    required_error: "El codigo de verificaion es requerido"
+  }).min(2, {
+    message: 'el codigo enviado tiene minimo 2 digitos'
+  })
+})
+
+export const newPasswordSchema = z.object({
+  newPassword: z.string({
+    required_error: 'La contraseña es requerida'
+  }).min(8, {
+    message: 'la contraseña debe tener mas de 8 cracteres de longitud'
+  })
+})
