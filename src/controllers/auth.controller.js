@@ -103,6 +103,7 @@ export const logOut = async (req, res) => {
 export const recoveryPassword = async (req, res) => {
   try {
     const { email } = req.body
+    const title = 'Codigo cambio de contraseña'
     const user = await prisma.user.findUnique({
       where: {
         emailUser: email,
@@ -122,16 +123,18 @@ export const recoveryPassword = async (req, res) => {
       verifyCode: code,
       id: user.idUser
     })
+    await SendMail(notificationTemplate(
+      email,
+      `Codigo de verificacion es: <strong>${code}</strong> `
+    ),
+      title,
+      user.emailUser
+    )
     console.log(code)
     res.cookie('CodeVerify', token)
-    return res.status(200).json({
-      message: 'Token de verificaión',
-      tokenPass: token
-    })
+    return res.status(200).json(useSend("Correo Enviado", token))
   } catch (error) {
-    return res.status(500).json({
-      message: 'Something goes wrong'
-    })
+    return res.status(500).json(useError("El correo no pudo ser Enviado", error))
   }
 }
 
@@ -139,6 +142,7 @@ export const verifyCodePassword = async (req, res) => {
   try {
     const { code } = req.body
     const { CodeVerify } = req.cookies
+    const title = 'Solicitud cambio de Contraseña'
 
     if (!CodeVerify) {
       return res.status(404).json({
@@ -170,13 +174,16 @@ export const verifyCodePassword = async (req, res) => {
         message: 'Codigo Invalido'
       })
     }
-    return res.status(200).json({
-      message: 'Correo enviado, verifica tu mail'
-    })
+    await SendMail(notificationTemplate(
+      user.emailUser,
+      `<strong>Se ha solicitado un cambio de contraseña de tu cuenta</strong>`
+    ),
+      title,
+      user.emailUser
+    )
+    return res.status(200).json(useSend('Correo enviado', null))
   } catch (error) {
-    return res.status(500).json({
-      message: 'Proceso no Autorizado'
-    })
+    return res.status(500).json(useError('el correo no a sido enviado', error))
   }
 }
 
@@ -184,6 +191,7 @@ export const changePassword = async (req, res) => {
   try {
     const { newPassword } = req.body
     const { CodeVerify } = req.cookies
+    const title = 'Cambio de contraseña exitoso '
     if (!CodeVerify) {
       return res.status(404).json({
         messaje: 'Cookie no encontrada'
@@ -218,6 +226,13 @@ export const changePassword = async (req, res) => {
         }
       })
       console.log(passChanged)
+      await SendMail(notificationTemplate(
+        passChanged.emailUser,
+        `<strong>Se ha realizado un cambio de contraseña de tu cuenta</strong>`
+      ),
+        title,
+        passChanged.emailUser
+      )
       res.clearCookie('CodeVerify', '', {
         expires: new Date(0)
       })
@@ -225,9 +240,7 @@ export const changePassword = async (req, res) => {
         message: 'constraseña actualizada'
       })
     } else {
-      return res.status(406).json({
-        message: 'La contraseña debe ser diferente'
-      })
+      return res.status(406).json(useSend('Tu contraseña a sido actualizada!!'))
     }
   } catch (error) {
     return res.status(5000).json({
