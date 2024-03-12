@@ -3,7 +3,8 @@ import cors from 'cors'
 import morgan from 'morgan'
 import cookieParser from 'cookie-parser'
 import { FRONT_URL } from './config.js'
-import userRoutes from './routes/auth.routes.js'
+import authRoutes from './routes/auth.routes.js'
+import userRoutes from './routes/user.routes.js'
 
 const app = express()
 app.use(express.json())
@@ -17,6 +18,7 @@ app.use(cors({
 }))
 app.use(cookieParser())
 
+app.use('/api', authRoutes)
 app.use('/api', userRoutes)
 
 app.use((req, res, next) => {
