@@ -8,6 +8,7 @@ import { notificationTemplate } from '../helpers/Mails/templates/notificationTem
 import { useSend } from '../helpers/useSend.js'
 import { useError } from '../helpers/useError.js'
 
+// Acciones solo de administrador
 export const registerNewUser = async (req, res) => {
   try {
     const { name, email, password } = req.body
@@ -91,7 +92,7 @@ export const disableUser = async (req, res) => {
       where: {
         idUser: id,
         AND: {
-          state:'ACTIVE'
+          state: 'ACTIVE'
         }
       },
       data: {
@@ -108,9 +109,55 @@ export const disableUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
   try {
     const id = String(req.params.id)
-    console.log(id)
-    return res.status(200).json(useSend('Eliminando Usuario', id))
+    const user = await prisma.user.findUnique({
+      where: {
+        idUser: id,
+        AND: {
+          state: 'ACTIVE'
+        }
+      }
+    })
+    if (!user) {
+      return res.status(500).json(useError('Usuario no encontrado', null))
+    }
+    const oldUser = await prisma.user.delete({
+      where: {
+        idUser: id
+      }
+    })
+    return res.status(200).json(useSend('usuario Eliminado', oldUser))
   } catch (error) {
-    return res.status(200).json(useSend('Something goes wrong', error))
+    return res.status(500).json(useSend('Something goes wrong', error))
+  }
+}
+
+export const manyUser = async (req, res) => {
+  try {
+    const usersCollection = await prisma.user.findMany()
+    if (!usersCollection) {
+      return res.status(404).json(useError('No se encontraron usuarios', 404))
+    }
+    return res.status(200).json(useSend('informacion de usuarios', usersCollection))
+  } catch (error) {
+    return res.status(500).json(useSend('Something goes wrong', error))
+  }
+}
+
+// acciones Shared (compartidas entre roles)
+
+export const oneUser = async (req, res) => {
+  try {
+    const id = String(req.params.id)
+    const user = await prisma.user.findUnique({
+      where: {
+        idUser: id
+      }
+    })
+    if (!user) {
+      return res.status(404).json(useError('usuario no encontrado', null))
+    }
+    return res.status(200).json(useSend('informacion del usuario', user))
+  } catch (error) {
+    return res.status(500).json(useSend('Something goes wrong', error))
   }
 }
