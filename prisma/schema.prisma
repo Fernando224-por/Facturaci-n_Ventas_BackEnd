@@ -18,7 +18,9 @@ model user {
   nameUser  String
   emailUser String @unique
   password  String
-  state Status @default(ACTIVE)
+  createAt  DateTime @default(now())
+  updateAt  DateTime? @db.Timestamp()
+  state     Status @default(ACTIVE)
 }
 
 enum Status {
