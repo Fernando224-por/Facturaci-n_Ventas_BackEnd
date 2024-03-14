@@ -77,10 +77,12 @@ export const logIn = async (req, res) => {
         nickName: userFound.nameUser,
         mail: userFound.emailUser
       })
+      const dataUser = {
+        nickName: userFound.nameUser,
+        mail: userFound.emailUser
+      }
       res.cookie('token', token)
-      return res.status(200).json({
-        message: 'Logeo exitoso'
-      })
+      return res.status(200).json(useSend('Logeo exitoso', dataUser))
     } else {
       return res.status(406).json({
         message: 'Credenciales invalidas'
@@ -191,6 +193,7 @@ export const changePassword = async (req, res) => {
   try {
     const { newPassword } = req.body
     const { CodeVerify } = req.cookies
+    console.log(newPassword)
     const title = 'Cambio de contraseña exitoso '
     if (!CodeVerify) {
       return res.status(404).json({
