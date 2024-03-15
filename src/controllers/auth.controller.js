@@ -40,11 +40,6 @@ export const registNewUser = async (req, res) => {
       "Has sido registrado en el sistema",
       newUser.emailUser
     )
-    const token = await createAccesToken({
-      nickName: newUser.nameUser,
-      mail: newUser.emailUser
-    })
-    res.cookie('token', token)
     return res.status(200).json({
       message: 'Registrado exitosamente'
     })
