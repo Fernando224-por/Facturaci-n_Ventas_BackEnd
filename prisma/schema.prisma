@@ -14,13 +14,23 @@ datasource db {
 }
 
 model user {
-  idUser    String @id @unique
-  nameUser  String
-  emailUser String @unique
-  password  String
-  createAt  DateTime @default(now())
-  updateAt  DateTime? @db.Timestamp()
-  state     Status @default(ACTIVE)
+  idUser     String    @id @unique
+  nameUser   String
+  emailUser  String    @unique
+  password   String
+  createAt   DateTime  @default(now())
+  updateAt   DateTime? @db.Timestamp()
+  state      Status    @default(ACTIVE)
+  role       role?     @relation(fields: [roleIdRole], references: [idRole])
+  roleIdRole Int?
+}
+
+model role {
+  idRole     Int    @id @default(autoincrement())
+  nameRole   String @unique
+  resumeRole String
+  state      Status @default(ACTIVE)
+  user       user[]
 }
 
 enum Status {
