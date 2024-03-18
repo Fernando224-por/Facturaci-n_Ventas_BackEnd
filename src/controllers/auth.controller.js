@@ -33,23 +33,22 @@ export const registNewUser = async (req, res) => {
         idUser: identifier,
         nameUser: name,
         emailUser: email,
-        password: hash
+        password: hash,
+        role: {
+          connect: { idRole: Number(2) }
+        }
       }
     })
     await SendMail(notificationTemplate(newUser.emailUser, "Registro Exitoso"),
       "Has sido registrado en el sistema",
       newUser.emailUser
     )
-    const token = await createAccesToken({
-      nickName: newUser.nameUser,
-      mail: newUser.emailUser
-    })
-    res.cookie('token', token)
     return res.status(200).json({
-      message: 'Registrado exitosamente'
+      message: 'Registrado exitosamente',
+      data: newUser
     })
   } catch (error) {
-    return res.status(404).json({
+    return res.status(500).json({
       message: error
     })
   }

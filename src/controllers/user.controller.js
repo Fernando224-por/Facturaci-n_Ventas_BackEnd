@@ -11,7 +11,7 @@ import { useError } from '../helpers/useError.js'
 // Acciones solo de administrador
 export const registerNewUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body
+    const { name, email, password, role } = req.body
     const user = await prisma.user.findUnique({
       where: {
         emailUser: email,
@@ -28,7 +28,12 @@ export const registerNewUser = async (req, res) => {
           idUser: identifier,
           nameUser: name,
           emailUser: email,
-          password: hash
+          password: hash,
+          role: {
+            connect: {
+              idRole: Number(role)
+            }
+          }
         }
       })
       console.log(email, name, hash, identifier)
@@ -40,44 +45,10 @@ export const registerNewUser = async (req, res) => {
   }
 }
 
-export const updateUser = async (req, res) => {
-  try {
-    const id = String(req.params.id)
-    const { name, email } = req.body
-    const user = await prisma.user.findUnique(({
-      where: {
-        idUser: id,
-        AND: {
-          state: 'ACTIVE'
-        }
-      }
-    }))
-    if (!user) {
-      return res.status(500).json(useSend('El usuario no existe', null))
-    }
-    const newData = await prisma.user.update({
-      where: {
-        idUser: id,
-        AND: {
-          state: 'ACTIVE'
-        }
-      },
-      data: {
-        nameUser: name,
-        emailUser: email,
-        updateAt: new Date()
-      }
-    })
-    return res.status(200).json(useSend('Actualizando usuario', newData))
-  } catch (error) {
-    return res.status(500).json(useError('Something goes wrong', error))
-  }
-}
-
 export const disableUser = async (req, res) => {
   try {
     const id = String(req.params.id)
-    const user = await prisma.user.findUnique({
+    const user = await prisma.role.findUnique({
       where: {
         idUser: id,
         AND: {
@@ -106,30 +77,6 @@ export const disableUser = async (req, res) => {
   }
 }
 
-export const deleteUser = async (req, res) => {
-  try {
-    const id = String(req.params.id)
-    const user = await prisma.user.findUnique({
-      where: {
-        idUser: id,
-        AND: {
-          state: 'ACTIVE'
-        }
-      }
-    })
-    if (!user) {
-      return res.status(500).json(useError('Usuario no encontrado', null))
-    }
-    const oldUser = await prisma.user.delete({
-      where: {
-        idUser: id
-      }
-    })
-    return res.status(200).json(useSend('usuario Eliminado', oldUser))
-  } catch (error) {
-    return res.status(500).json(useSend('Something goes wrong', error))
-  }
-}
 
 export const manyUser = async (req, res) => {
   try {
@@ -159,5 +106,69 @@ export const oneUser = async (req, res) => {
     return res.status(200).json(useSend('informacion del usuario', user))
   } catch (error) {
     return res.status(500).json(useSend('Something goes wrong', error))
+  }
+}
+
+export const deleteUser = async (req, res) => {
+  try {
+    const id = String(req.params.id)
+    const user = await prisma.user.findUnique({
+      where: {
+        idUser: id,
+        AND: {
+          state: 'ACTIVE'
+        }
+      }
+    })
+    if (!user) {
+      return res.status(500).json(useError('Usuario no encontrado', null))
+    }
+    const oldUser = await prisma.user.delete({
+      where: {
+        idUser: id
+      }
+    })
+    return res.status(200).json(useSend('usuario Eliminado', oldUser))
+  } catch (error) {
+    return res.status(500).json(useSend('Something goes wrong', error))
+  }
+}
+
+export const updateUser = async (req, res) => {
+  try {
+    const id = String(req.params.id)
+    const { name, email, role} = req.body
+    const user = await prisma.user.findUnique(({
+      where: {
+        idUser: id,
+        AND: {
+          state: 'ACTIVE'
+        }
+      }
+    }))
+    if (!user) {
+      return res.status(500).json(useSend('El usuario no existe', null))
+    }
+    const newData = await prisma.user.update({
+      where: {
+        idUser: id,
+        AND: {
+          state: 'ACTIVE'
+        }
+      },
+      data: {
+        nameUser: name,
+        emailUser: email,
+        updateAt: new Date(),
+        role: {
+          connect: {
+            idRole: role
+          }
+        }
+      }
+    })
+    return res.status(200).json(useSend('Actualizando usuario', newData))
+  } catch (error) {
+    return res.status(500).json(useError('Something goes wrong', error))
   }
 }
